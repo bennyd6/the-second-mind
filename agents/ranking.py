@@ -4,7 +4,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from colorama import Fore, Style
 
 # 🔐 API Keys
-GEMINI_API_KEY = "AIzaSyAC9CEk8Hx2GBkChK4-Y-jQiEpHP0B5WrM"
+GEMINI_API_KEY = "AIzaSyDfdyyRwBDSMcCA9NlA6XCqtFH4r3Sy92w"
 SERPAPI_KEY = "a42c2442b00c4a5146d54288fab5ea3ddc8213b867a51420b59bb0079fbff4d1"
 
 # Function to print status messages with color

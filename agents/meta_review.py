@@ -3,7 +3,7 @@ from colorama import Fore, Style
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # 🔑 Google Gemini API Key
-GEMINI_API_KEY = "AIzaSyAC9CEk8Hx2GBkChK4-Y-jQiEpHP0B5WrM"
+GEMINI_API_KEY = "AIzaSyDfdyyRwBDSMcCA9NlA6XCqtFH4r3Sy92w"
 
 # ✅ Function to Print Status Updates
 def print_status(message, color=Fore.MAGENTA):

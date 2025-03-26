@@ -18,7 +18,7 @@ print(ranking)
 evolution=evolve_hypothesis(reflection,query,ranking)
 print(evolution)
 
-proximity=proximity_analysis(evolution)
+proximity = proximity_analysis(query, evolution)
 print(proximity)
 
 meta_review=meta_review(generation, reflection, ranking, evolution, proximity)

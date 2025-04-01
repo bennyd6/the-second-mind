@@ -5,7 +5,7 @@ from colorama import Fore, Style
 
 # 🔐 API Keys
 GEMINI_API_KEY = "AIzaSyDfdyyRwBDSMcCA9NlA6XCqtFH4r3Sy92w"
-SERPAPI_KEY = "a42c2442b00c4a5146d54288fab5ea3ddc8213b867a51420b59bb0079fbff4d1"
+SERPAPI_KEY = "81f369295a20485dc397e2a8e0094dbc69883f10a75f8a1e1c5e6cde2205b690"
 
 # Function to print status messages with color
 def print_status(message, color=Fore.GREEN):

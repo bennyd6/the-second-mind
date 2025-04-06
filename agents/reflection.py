@@ -1,108 +1,64 @@
+import os
 import time
 import requests
-from colorama import Fore
 from bs4 import BeautifulSoup
 from langchain_google_genai import ChatGoogleGenerativeAI
+from dotenv import load_dotenv
 
+load_dotenv(".env")
 
-# 🔑 Google Gemini API Key
-GEMINI_API_KEY = "AIzaSyDfdyyRwBDSMcCA9NlA6XCqtFH4r3Sy92w"
+GEMINI_API_KEY = os.getenv("gemini_api")
+SERPAPI_KEY = os.getenv("serp_api")
 
-# ✅ Function to Print Status Updates
-def print_status(message, color):
-    print(color + message + Fore.RESET)
+if not GEMINI_API_KEY:
+    raise ValueError("Missing GEMINI_API_KEY. Set it in environment variables.")
 
-# 🔍 Fetch Research Papers from Google Scholar
-def fetch_google_scholar_papers(hypothesis):
-    print_status("\n🔍 Searching Google Scholar for related research...", Fore.BLUE)
-    
-    query = hypothesis.replace(" ", "+")  # Format query for search
+def fetch_google_scholar_papers(query):
     url = f"https://scholar.google.com/scholar?q={query}"
-    
     headers = {"User-Agent": "Mozilla/5.0"}
-    response = requests.get(url, headers=headers)
-    
-    if response.status_code == 200:
+
+    try:
+        response = requests.get(url, headers=headers, timeout=5)
+        response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
-        results = soup.select(".gs_rt a")  # Extract titles of research papers
-        
+        results = soup.select(".gs_rt a")
         papers = [{"title": result.text, "link": result["href"]} for result in results[:5]]
-        return papers if papers else [{"title": "No relevant research papers found.", "link": "#"}]
-    else:
-        return [{"title": "Error fetching Google Scholar results.", "link": "#"}]
+        return papers
+    except requests.exceptions.RequestException:
+        return []
 
-# ✅ Fetch Fact-Checking Data
-def fetch_fact_check_results(hypothesis):
-    print_status("\n✅ Checking fact-checking sources...", Fore.YELLOW)
-    
-    # Dummy response (Replace with API if needed)
-    fact_checks = [
-        {"source": "Snopes", "verdict": "Mostly True"},
-        {"source": "PolitiFact", "verdict": "Partially Accurate"},
-        {"source": "FactCheck.org", "verdict": "No relevant claims found."}
-    ]
-    
-    return fact_checks
+def fetch_validation_data(hypothesis, query):
+    return {"research_papers": fetch_google_scholar_papers(query)}
 
-# 📰 Fetch News Articles
-def fetch_news_results(hypothesis):
-    print_status("\n📰 Searching news sources for real-world relevance...", Fore.MAGENTA)
-    
-    # Dummy response (Replace with API if needed)
-    news_articles = [
-        {"title": "TechCrunch: New study shows solar window panels outperform rooftop panels.", "source": "TechCrunch"},
-        {"title": "BBC News: Renewable energy innovations gain traction globally.", "source": "BBC"},
-        {"title": "No recent news articles available on this hypothesis.", "source": "Unknown"}
-    ]
-    
-    return news_articles
+def reflect_on_hypothesis(hypothesis, query):
+    real_world_data = fetch_validation_data(hypothesis, query)
+    time.sleep(2)
 
-# 🔍 Fetch Validation Data from All Sources
-def fetch_validation_data(hypothesis):
-    print_status("\n🔍 Fetching real-world validation data...", Fore.BLUE)
-    
-    return {
-        "research_papers": fetch_google_scholar_papers(hypothesis),
-        # "fact_checks": fetch_fact_check_results(hypothesis),
-        # "news_articles": fetch_news_results(hypothesis),
-    }
-
-# 🤖 Reflection Agent: Validates & Refines Hypothesis
-def reflect_on_hypothesis(hypothesis):
-    print_status("\n🔍 Validating hypothesis using real-world data...", Fore.BLUE)
-    
-    # 🌍 Fetch real-world evidence
-    real_world_data = fetch_validation_data(hypothesis)
-
-    print_status("\n🔬 Performing logical consistency check...", Fore.CYAN)
-    time.sleep(2)  # Simulate AI processing delay
-
-    # 🔥 LangChain Gemini Model
     model = ChatGoogleGenerativeAI(model="gemini-2.0-flash", google_api_key=GEMINI_API_KEY)
 
-
-
     prompt = f"""
-    **Initial Hypothesis:**  
+    Initial Hypothesis:  
     {hypothesis}  
 
-    **Validation Data from Web:**  
-    📚 **Research Papers:**  
+    Validation Data from Web:  
+    Research Papers:  
     {', '.join([f"{p['title']} ({p['link']})" for p in real_world_data['research_papers']])}  
 
-    **Task:**  
-    - **Analyze** the hypothesis based on logical consistency and real-world evidence.  
-    - **Classify it** as **"Valid"**, **"Partially Valid"**, or **"Invalid"** with a reason.  
-    - **Refine** the hypothesis if necessary, ensuring it aligns with the latest data.  
+    Task:  
+    - Analyze the hypothesis for logical consistency and real-world support.  
+    - Classify it as "Valid", "Partially Valid", or "Invalid" with justification.  
+    - Refine the hypothesis to align with the latest research.  
 
-    **Output:**  
-    Provide only the **refined hypothesis** after analysis.  
+    Output:  
+    Provide a refined hypothesis if necessary.
     """
 
-    # 🧠 Get response from Gemini
-    response = model.invoke(prompt)
+    try:
+        response = model.invoke(prompt)
+        return response.content if response else "Error in reflection analysis."
+    except Exception:
+        return "Error during reflection analysis."
 
-    print_status("\n✅ Reflection analysis completed!\n", Fore.GREEN)
-    
-    return response.content if response else "❌ Error in reflection analysis."
-
+if __name__ == "__main__":
+    refined_hypothesis = reflect_on_hypothesis(hypothesis, query)
+    print(refined_hypothesis)

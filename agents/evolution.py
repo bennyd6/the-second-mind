@@ -1,52 +1,36 @@
+import os
 import time
 import requests
 from langchain_google_genai import ChatGoogleGenerativeAI
-from colorama import Fore, Style
+from dotenv import load_dotenv
 
-# 🔐 API Keys
-GEMINI_API_KEY = "AIzaSyDfdyyRwBDSMcCA9NlA6XCqtFH4r3Sy92w"
-SERPAPI_KEY = "81f369295a20485dc397e2a8e0094dbc69883f10a75f8a1e1c5e6cde2205b690"
+load_dotenv(".env")
 
-# ✅ Function to Print Status Updates
-def print_status(message, color=Fore.GREEN):
-    print(color + message + Style.RESET_ALL)
+GEMINI_API_KEY = os.getenv("gemini_api")
+SERPAPI_KEY = os.getenv("serp_api")
 
-# 🌍 Fetch Latest Trends from Web
+if not GEMINI_API_KEY or not SERPAPI_KEY:
+    raise ValueError("Missing API keys! Ensure GEMINI_API_KEY and SERPAPI_KEY are set.")
+
 def fetch_latest_trends(hypothesis):
-    print_status("\n🔍 Fetching latest trends related to the hypothesis...", Fore.BLUE)
-    
     url = f"https://serpapi.com/search.json?q={hypothesis} latest trends&api_key={SERPAPI_KEY}"
-    response = requests.get(url)
-    
-    if response.status_code != 200:
-        print_status("Error: Failed to fetch latest trends.", Fore.RED)
-        return "No recent trends found."
-    
-    data = response.json()
-    trends = [result["snippet"] for result in data.get("organic_results", [])[:3]]
-    
-    if trends:
-        print_status(f"Found {len(trends)} recent trends!", Fore.GREEN)
-        return "\n".join(trends)
-    else:
-        print_status("No major trends found.", Fore.YELLOW)
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        trends = [result.get("snippet", "No summary available.") for result in data.get("organic_results", [])[:3]]
+        if trends:
+            return "\n".join(trends)
+        else:
+            return "No recent trends found."
+    except requests.exceptions.RequestException:
         return "No recent trends found."
 
-# 🚀 Evolution Agent: Enhances Hypothesis Based on Latest Data
-def evolve_hypothesis(reflection_analysis, query ,ranking_analysis):
-    print_status("\n🌱 Evolving the hypothesis with real-world insights...", Fore.CYAN)
-    
+def evolve_hypothesis(reflection_analysis, query, ranking_analysis):
     latest_trends = fetch_latest_trends(query)
-    
-    print_status("\n🤖 Refining hypothesis using AI...")
-    time.sleep(2)  # Simulate AI processing delay
-    
-    # 🔥 LangChain Gemini Model
+    time.sleep(2)
     model = ChatGoogleGenerativeAI(model="gemini-2.0-flash", google_api_key=GEMINI_API_KEY)
-    
-    # 📜 Evolution Prompt
     prompt = f"""
-
     **Reflection Analysis Outcome:**  
     {reflection_analysis}  
 
@@ -57,15 +41,19 @@ def evolve_hypothesis(reflection_analysis, query ,ranking_analysis):
     {latest_trends}  
 
     **Task:**  
-    - **Enhance** the hypothesis based on all collected insights.  
+    - **Enhance** the hypothesis by incorporating insights from all data sources.  
     - Ensure it aligns with **latest trends**, **technical feasibility**, and **practical adoption**.  
-    - If needed, **modify the hypothesis** while keeping its core idea intact.  
+    - If necessary, **refine the hypothesis** while maintaining its core idea.  
 
-    **Output:**  
-    Provide only the **evolved hypothesis** after analysis.  
+    **Output Format:**  
+    ```
+    Evolved Hypothesis: [Refined hypothesis here]  
+    Explanation: [Brief reason for modification]  
+    ```
     """
-
-    response = model.invoke(prompt)
-    
-    print_status("\n✅ Hypothesis evolution completed!", Fore.GREEN)
-    return response.content if response else "❌ Error in hypothesis evolution."
+    try:
+        response = model.invoke(prompt)
+        evolved_hypothesis = response.content if response else "Error in hypothesis evolution."
+        return evolved_hypothesis
+    except Exception:
+        return "Error in hypothesis evolution."

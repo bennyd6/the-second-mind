@@ -1,107 +1,83 @@
+import os
 import requests
 import time
 from bs4 import BeautifulSoup
 from langchain_google_genai import ChatGoogleGenerativeAI
-from colorama import Fore, Style
+from dotenv import load_dotenv
 
-# 🔐 Hardcoded API Keys (Replace with valid keys)
-GEMINI_API_KEY = "AIzaSyDfdyyRwBDSMcCA9NlA6XCqtFH4r3Sy92w"
-SERPAPI_KEY = "81f369295a20485dc397e2a8e0094dbc69883f10a75f8a1e1c5e6cde2205b690"
+load_dotenv(".env")
 
-# Function to print status messages with color
-def print_status(message, color=Fore.GREEN):
-    print(color + message + Style.RESET_ALL)
+GEMINI_API_KEY = os.getenv("gemini_api")
+SERPAPI_KEY = os.getenv("serp_api")
 
-# Function to fetch top 3 search results
+if not GEMINI_API_KEY or not SERPAPI_KEY:
+    print("Missing API keys! Set GEMINI_API_KEY and SERPAPI_KEY.")
+    exit()
+
 def web_scrape(topic):
-    print_status(f"\nSearching for: {topic}...", Fore.CYAN)
-    
     url = f"https://serpapi.com/search.json?q={topic}&api_key={SERPAPI_KEY}"
-    response = requests.get(url)
-
-    if response.status_code != 200:
-        print_status("Error: Failed to fetch search results.", Fore.RED)
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        search_results = [result["link"] for result in data.get("organic_results", [])[:3]]
+        print(f"Found {len(search_results)} articles.")
+        return search_results
+    except requests.exceptions.RequestException:
+        print("Failed to fetch search results.")
         return []
 
-    data = response.json()
-    search_results = [result["link"] for result in data.get("organic_results", [])[:3]]
-
-    if search_results:
-        print_status(f"Found {len(search_results)} relevant articles!", Fore.GREEN)
-    else:
-        print_status("No articles found.", Fore.YELLOW)
-
-    return search_results
-
-# Function to extract ALL paragraphs from a given URL
 def extract_content(url):
-    headers = {"User-Agent": "Mozilla/5.0"}
-    
-    print_status(f"Fetching content from: {url}...", Fore.MAGENTA)
-    time.sleep(1)  # Simulate loading delay
-
+    print(f"Fetching content from {url}...")
+    time.sleep(1)
     try:
-        response = requests.get(url, headers=headers, timeout=5)
-
-        if response.status_code != 200:
-            print_status(f" Skipping {url} (Status: {response.status_code})", Fore.YELLOW)
-            return ""
-
+        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=5)
+        response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
-        paragraphs = soup.find_all("p")  # Extract ALL paragraphs
-        text_content = " ".join([p.text.strip() for p in paragraphs if p.text.strip()])
-        
+        paragraphs = soup.find_all("p")
+        text_content = " ".join([p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True)])
         if text_content:
-            print_status(" Successfully extracted content!", Fore.GREEN)
+            print("Successfully extracted content.")
         else:
-            print_status(" No readable content found.", Fore.YELLOW)
-
+            print("No readable content found.")
         return text_content
-    
     except requests.exceptions.RequestException:
-        print_status(f" Skipping {url} due to a request error.", Fore.RED)
+        print(f"Failed to retrieve {url}.")
         return ""
 
-# Function to generate hypothesis using Gemini
 def generate_hypothesis(topic):
+    print("Searching for relevant articles...")
     web_results = web_scrape(topic)
-
     if not web_results:
-        print_status(" No relevant articles found. Exiting...", Fore.RED)
-        return "No hypothesis generated."
-
-    print_status("\n Extracting information from articles...", Fore.BLUE)
-
-    # Collect content from all top 3 links
-    extracted_content = []
-    for url in web_results:
-        content = extract_content(url)
-        if content:
-            extracted_content.append(content)
-
+        return "No articles found. Unable to generate hypothesis."
+    print("Extracting information from articles...")
+    extracted_content = [extract_content(url) for url in web_results]
+    extracted_content = [content for content in extracted_content if content]
     if not extracted_content:
-        content = "No relevant data found."
-        print_status(" No usable content from articles.", Fore.YELLOW)
-    else:
-        content = "\n\n".join(extracted_content)
-        print_status(" Content successfully gathered!", Fore.GREEN)
-
-    print_status("\n Generating hypothesis using Gemini AI...", Fore.CYAN)
-    time.sleep(2)  # Simulate AI processing delay
-
-    # 🔥 LangChain Gemini model
+        return "No useful content found in articles."
+    full_content = " ".join(extracted_content)
+    print("Generating hypothesis using Gemini AI...")
     model = ChatGoogleGenerativeAI(model="gemini-2.0-flash", google_api_key=GEMINI_API_KEY)
-
-    # 📜 Prompt for hypothesis generation
     prompt = f"""
     Topic: {topic}
     Extracted Web Content:
-    {content}
+    {full_content}
 
     Generate a structured analysis based on this information.
     """
+    try:
+        response = model.invoke(prompt)
+        hypothesis = response.content if response else "Error generating hypothesis."
+        print("Hypothesis successfully generated.")
+        return hypothesis
+    except Exception as e:
+        print(f"Gemini API Error: {e}")
+        return "Error generating hypothesis."
 
-    response = model.invoke(prompt)
-
-    print_status("\n Hypothesis generated successfully!\n", Fore.GREEN)
-    return response.content if response else "Error generating hypothesis."
+if __name__ == "__main__":
+    topic = input("Enter a topic: ")
+    hypothesis = generate_hypothesis(topic)
+    print("\nFINAL HYPOTHESIS:")
+    print("="*50)
+    print(hypothesis)
+    print("="*50)

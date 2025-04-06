@@ -49,7 +49,6 @@ serp_api=your_serp_api
 ```bash
 streamlit run app.py
 ```
-
 ---
 
 ## ✅ Prerequisites

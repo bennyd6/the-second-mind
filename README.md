@@ -27,7 +27,7 @@ The system consists of a **Supervisor Agent** that orchestrates multiple special
 
 ## 🚀 Setup Instructions
 
-### 1️⃣ Unzip 
+### 1️⃣ Clone the Repo 
 ```bash
 cd agents
 ```

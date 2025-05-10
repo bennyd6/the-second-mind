@@ -30,6 +30,7 @@ def fetch_ranking_data(query):
         return "No real-world data available."
 
 def rank_hypothesis(hypothesis, query):
+    print("\n\n\nRanking Initiated!!\n\n\n")
     ranking_data = fetch_ranking_data(query)
 
     model = ChatGoogleGenerativeAI(model="gemini-2.0-flash", google_api_key=GEMINI_API_KEY)
@@ -68,6 +69,7 @@ def rank_hypothesis(hypothesis, query):
 
     try:
         response = model.invoke(prompt)
+        print(response)
         return response.content if response else "Error in ranking analysis."
     except Exception as e:
         return "Error in ranking analysis."

@@ -16,7 +16,6 @@ load_dotenv(".env")
 
 GEMINI_API_KEY = os.getenv("gemini_api")
 SERPAPI_KEY = os.getenv("serp_api")
-
 redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
 mongo_client = MongoClient(os.getenv("mongo_uri"))

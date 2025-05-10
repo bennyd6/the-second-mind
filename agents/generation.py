@@ -46,6 +46,7 @@ def extract_content(url):
         return ""
 
 def generate_hypothesis(topic):
+    print("Generation Initiated!\n\n\n")
     print("Searching for relevant articles...")
     web_results = web_scrape(topic)
     if not web_results:

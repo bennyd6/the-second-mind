@@ -31,6 +31,7 @@ def fetch_validation_data(hypothesis, query):
     return {"research_papers": fetch_google_scholar_papers(query)}
 
 def reflect_on_hypothesis(hypothesis, query):
+    print("\n\n\n\n\n\n\n\n\n\nReflection Intiated!!")
     real_world_data = fetch_validation_data(hypothesis, query)
     time.sleep(2)
 
@@ -53,12 +54,12 @@ def reflect_on_hypothesis(hypothesis, query):
     Provide a refined hypothesis if necessary.
     """
 
+    print("Research Papers Status:")
+    for paper in real_world_data["research_papers"]:
+        print(f"{paper['title']} ({paper['link']})")
+
     try:
         response = model.invoke(prompt)
         return response.content if response else "Error in reflection analysis."
     except Exception:
         return "Error during reflection analysis."
-
-if __name__ == "__main__":
-    refined_hypothesis = reflect_on_hypothesis(hypothesis, query)
-    print(refined_hypothesis)

@@ -165,11 +165,39 @@
     transform: scaleX(1);
   }
   
-  .tab-content {
-    margin-top: 30px;
-    text-align: center;
-    background-color: rgb(153, 153, 153, 0.5);
-    width: 90%;
-    border-radius: 10px;
-  }
-  
+.tab-content {
+  margin-top: 30px;
+  text-align: left; /* Better for long-form content */
+  background-color: rgba(153, 153, 153, 0.5);
+  width: 90%;
+  border-radius: 10px;
+  padding: 20px;
+  max-height: 400px;         /* Limits the vertical space */
+  overflow-y: auto;          /* Enables scroll when needed */
+  box-sizing: border-box;    /* Ensures padding doesn't overflow */
+  scrollbar-width: thin;     /* For Firefox */
+  scrollbar-color: #888 #ccc;
+  overflow-x: hidden;
+  text-wrap: wrap;
+  overflow-wrap: break-word;
+white-space: normal;
+}
+
+/* Chrome, Edge, and Safari custom scrollbar styling */
+.tab-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tab-content::-webkit-scrollbar-track {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.tab-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.tab-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

@@ -4,7 +4,7 @@ import Content1 from './content-1';
 import Content2 from './content-2';
 import Loader from './loader';
 
-export default function Content() {
+export default function Content({ loading, responseData }) {
     return (
         <div className="cont-main">
             <div className="cont-in">
@@ -13,9 +13,10 @@ export default function Content() {
                     Your browser does not support the video tag.
                 </video>
                 <div className="overlay"></div>
-                <Content1></Content1>
-                {/* <Content2></Content2> */}
-                {/* <Loader></Loader> */}
+
+                {!loading && !responseData && <Content1 />}
+                {loading && <Loader />}
+                {!loading && responseData && <Content2 data={responseData} />}
             </div>
         </div>
     );

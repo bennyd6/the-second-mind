@@ -1,39 +1,27 @@
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 const tabOptions = [
-    "Best Response",
-    "Generation",
+  "Best Response",
+  "Generation",
   "Reflection",
   "Ranking",
   "Evolution",
   "Proximity",
   "Meta Review",
-  "Resources"
 ];
 
-export default function Content2() {
-  const [activeTab, setActiveTab] = useState("Final Response");
+export default function Content2({ data }) {
+  const [activeTab, setActiveTab] = useState("Best Response");
 
-  const renderContent = () => {
-    switch (activeTab) {
-    case "Final Response":
-        default:
-          return <p>This is the Final Response (default) content.</p>;
-      case "Generation":
-        return <p>This is the Generation content.</p>;
-      case "Reflection":
-        return <p>This is the Reflection content.</p>;
-      case "Ranking":
-        return <p>This is the Ranking content.</p>;
-      case "Evolution":
-        return <p>This is the Evolution content.</p>;
-      case "Proximity":
-        return <p>This is the Proximity content.</p>;
-      case "Meta Review":
-        return <p>This is the Meta Review content.</p>;
-      case "Resources":
-        return <p>This is the Resources.</p>;
-    }
+  const tabContent = {
+    "Best Response": data.best_response,
+    "Generation": data.generation,
+    "Reflection": data.reflection,
+    "Ranking": data.ranking,
+    "Evolution": data.evolution,
+    "Proximity": data.proximity,
+    "Meta Review": data.meta_review
   };
 
   return (
@@ -50,7 +38,7 @@ export default function Content2() {
         ))}
       </div>
       <div className="tab-content">
-        {renderContent()}
+        <ReactMarkdown>{tabContent[activeTab]}</ReactMarkdown>
       </div>
     </div>
   );

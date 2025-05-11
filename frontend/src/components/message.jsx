@@ -1,6 +1,6 @@
 import './message.css';
 
-export default function Message({ messages }) {
+export default function Message({ messages = [] }) {
     return (
         <div className="mes-back">
             {messages.map((msg, index) => (

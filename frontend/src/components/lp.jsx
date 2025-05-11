@@ -1,14 +1,13 @@
-import './lp.css'
-import { useState } from 'react'
-import Message from './message'
+import './lp.css';
+import { useState } from 'react';
+import Message from './message';
 
-export default function Lp() {
-    const [messages, setMessages] = useState([]);
+export default function Lp({ onSubmit, messages }) {
     const [input, setInput] = useState('');
 
     const handleSend = () => {
         if (input.trim()) {
-            setMessages(prev => [...prev, input]);
+            onSubmit(input);
             setInput('');
         }
     };
@@ -21,13 +20,14 @@ export default function Lp() {
         <div className="lp-main">
             <div className="lp-in">
                 <div className="lp-in-1">
-                    {messages.length > 0 && <Message messages={messages} />}
+                    {/* Render messages here */}
+                    <Message messages={messages} />
                 </div>
                 <div className="lp-in-2">
                     <div className="input-bar">
                         <input
                             type="text"
-                            placeholder='Enter your query here..'
+                            placeholder="Enter your query here.."
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={handleKeyPress}

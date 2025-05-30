@@ -10,10 +10,10 @@
 }
 
 .cont-in {
-    position: relative;
-    width: 95%;
-    height: 90%;
-    border-radius: 15px;
+  width: 95%;
+  height: 90%;
+  border-radius: 15px;
+  position: relative;
     overflow: hidden; /* Ensures video stays within rounded corners */
 }
 

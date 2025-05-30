@@ -1,0 +1,175 @@
+.form-container {
+  height: 100vh;
+  width: 100vw;
+
+  /* height: calc(100vh - 80px); */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* background-color: #f0f7ff; */
+  justify-content: center;
+    background: #000000;
+  background: linear-gradient(162deg, rgba(0, 0, 0, 1) 0%, rgba(43, 43, 43, 1) 70%, rgba(156, 82, 180, 1) 84%, rgba(88, 90, 231, 1) 90%, rgba(240, 71, 116, 1) 96%);
+  font-family: 'Poppins';
+}
+
+.logo{
+    color: white;
+    /* font-family: 'Tiny5'; */
+        font-family: 'Cal Sans', sans-serif;
+    letter-spacing: 3px;
+    font-size: 40px;
+    font-weight: 100;
+}
+
+.form {
+  background: #333333;
+  /* background-color: #ccc; */
+  padding: 30px 40px;
+  border-radius: 30px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  width: 320px;
+  height: 380px;
+  color: white;
+}
+
+.reg{
+    height: 450px;
+}
+
+.form h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.form label {
+  display: flex;
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.form input {
+  width: 94%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+
+
+.message {
+  margin-top: 10px;
+  text-align: center;
+  font-weight: bold;
+  color: #d8000c;
+}
+
+.switch-button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  background-color: transparent;
+  border: 1px solid #6B6B6B;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.switch-button:hover {
+  background-color: #f0f7ff;
+  color: #000000;
+}
+
+
+.checkbox-container {
+  display: flex;
+  align-items: center;  /* vertically center checkbox and label */
+  gap: 6px;             /* small gap between checkbox and label */
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 18px;          /* bigger checkbox width */
+  height: 18px;         /* bigger checkbox height */
+  margin: 0;            /* remove default margin */
+  cursor: pointer;
+}
+
+.checkbox-container label {
+    margin-top: 0px;
+    font-size: 12px;
+  /* cursor: pointer; */
+  user-select: none;    /* prevent text selection on click */
+}
+
+
+.log-button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #6B6B6B;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 1s ease, transform 0.2s ease, box-shadow 0.2s ease, color 1s ease;
+}
+
+.log-button:hover {
+  background-color: #cacaca;
+  transform: scale(1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: black;
+}
+
+.switch-button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  background-color: transparent;
+  border: 1px solid #6B6B6B;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 1s ease, color 0.5s ease, transform 1s ease, box-shadow 0.2s ease;
+}
+
+.switch-button:hover {
+  background-color: #f0f7ff;
+  color: #000000;
+  transform: scale(1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.fancy-border {
+  background: linear-gradient(270deg,
+    rgba(156, 82, 180, 1),
+    rgba(88, 90, 231, 1),
+    rgba(240, 71, 116, 1),
+    rgba(156, 82, 180, 1));
+  background-size: 600% 600%;
+  animation: borderAnimation 3s ease infinite;
+  padding: 8px;
+  border-radius: 40px;
+  display: inline-block;
+}
+
+/* Animation Keyframes */
+@keyframes borderAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

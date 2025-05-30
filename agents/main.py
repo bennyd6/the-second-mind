@@ -14,13 +14,11 @@ from evolution import evolve_hypothesis
 from proximity import proximity_analysis
 from meta_review import meta_review
 
-# Load environment variables
 load_dotenv(".env")
 
 GEMINI_API_KEY = os.getenv("gemini_api")
 SERPAPI_KEY = os.getenv("serp_api")
 
-# Configure Gemini
 genai.configure(api_key=GEMINI_API_KEY)
 
 model = genai.GenerativeModel(
@@ -42,7 +40,6 @@ def process_query():
         return jsonify({"error": "Missing 'query' field"}), 400
 
     try:
-        # Core pipeline steps
         generation = generate_hypothesis(query)
         reflection = reflect_on_hypothesis(generation, query)
         ranking = rank_hypothesis(reflection, query)
@@ -50,7 +47,6 @@ def process_query():
         proximity = proximity_analysis(query, evolution)
         meta_review_response = meta_review(generation, reflection, ranking, evolution, proximity)
 
-        # Construct final prompt for best response
         best_prompt = f"""
         Based on the following outputs, provide a direct, final solution to the user's query.
         Do NOT explain how good the solution is.

@@ -1,0 +1,14 @@
+.his-main{
+    width: 100vw;
+    height: 93vh;
+}
+
+.his-in{
+    height: 100%;
+    width: 100%;
+    background-color: rgb(33, 33, 33);
+    position: relative;
+}
+.his-vid{
+    opacity: 0.2;
+}

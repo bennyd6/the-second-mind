@@ -46,7 +46,7 @@ export default function Home() {
                 </div>
             ) : (
                 <div className="main-2 main-2-enter">
-                    <Navbar />
+                    
                     <div className="main-2-in">
                         <Lp onSubmit={handleQuerySubmit} messages={messages} />
                         <Content loading={loading} responseData={responseData} />
